@@ -1,0 +1,64 @@
+//больше n=8 вводить не стоит
+#include <iostream>
+#include <string>
+#include <vector>
+
+using namespace std;
+
+vector <pair <int, int>> moves = {{-1, -2}, {-2, -1}, {-2, 1}, {-1, 2}, {1, 2}, {2, 1}, {2, -1}, {1, -2}};
+int n; 
+vector<vector<bool>> chessboard;
+int move_count = 0;
+
+bool chessboard_check(){
+    for(int y=0; y<n; y++){
+        for(int x=0; x<n; x++){
+            if(!chessboard[y][x]){
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+string horse(int y, int x){
+    chessboard[y][x] = true;
+    move_count++;
+
+    if(chessboard_check()){
+        return to_string(y)+' '+to_string(x);
+    }
+
+    int new_y, new_x;
+    for(pair<int, int> move : moves){
+        new_y = y+move.first;
+        new_x = x+move.second;
+        if(new_y>=0 and new_x>=0 and new_y<n and new_x<n and chessboard[new_y][new_x] == false){
+            string path = horse(new_y, new_x);
+            if(!path.empty()){
+                return to_string(y)+' '+to_string(x)+", "+ path;
+            }
+        }
+    }
+
+    chessboard[y][x] = false;
+    move_count--;
+    return "";
+}
+
+
+int main()
+{
+    cout << "input n";
+    cin >> n;
+    chessboard = vector<vector<bool>>(n, vector<bool>(n, false));
+    string result = horse(0, 0);
+    if (!result.empty()){
+        cout<<"Получившийся путь коня: " << result << endl;
+    } else {
+        cout <<"path not found" << endl;
+    }
+
+    cout <<"total moves: " << move_count << endl;
+    return 0;
+}
